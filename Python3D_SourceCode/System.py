@@ -65,6 +65,14 @@ class Vector3:
                 return Vector3(ans)
         raise TypeError()
     
+    #二つの位置間の距離の2上を返す
+    def distance(self, vec1):
+        return (
+            (vec1.vec[0] - self.vec[0])*(vec1.vec[0] - self.vec[0]) +
+            (vec1.vec[1] - self.vec[1])*(vec1.vec[1] - self.vec[1]) +
+            (vec1.vec[2] - self.vec[2])*(vec1.vec[2] - self.vec[2])
+        )
+    
     #回転量から、単位ベクトルを求める。
     def unitVectorx(self, arg):
         unitVectorx = [math.cos(arg.vec[1])*math.cos(arg.vec[2]), 
@@ -88,21 +96,18 @@ class Vector3:
         return Vector3(unitVectorz)
     
 #3次元座標をスクリーン上の2次元座標に変換する
+#投資投影変換
 class Tridim:
-    def __init__(self, cx, cy):
-        #画面上の収束する点
-        self.cx = cx
-        self.cy = cy
+    def __init__(self, perspective):
+        #視点の座標(画面上)
+        self.perspective = perspective
         
-    def dim(self, position):            #Vector3型で指定
-        #z → ∞で、xr → cx、yr → cy
-        #等比級数の和; a(1 - r^n)/(1 - r) ⇒ x + a/(1-r) = cx
-        rx = 0.999                           #項比
-        ry = 0.999
-        ax = (self.cx - position.vec[0]) * (1 - rx)    #初項
-        ay = (self.cy - position.vec[1]) * (1 - ry)
-        xr = position.vec[0] + ax*(1 - rx**position.vec[2])/(1 - rx)
-        yr = position.vec[1] + ay*(1 - ry**position.vec[2])/(1 - ry)
+    def dim(self, position):            
+        ratio =  (0-self.perspective.vec[2]) / (position.vec[2]-self.perspective.vec[2])
+        delx = position.vec[0] - self.perspective.vec[0]
+        dely = position.vec[1] - self.perspective.vec[1]
+        xr = self.perspective.vec[0] + delx * ratio
+        yr = self.perspective.vec[1] + dely * ratio
     
         return [xr, yr]
 

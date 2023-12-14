@@ -19,10 +19,10 @@ def main():
     #オブジェクトを作成--------------
     clock = pygame.time.Clock()
     #font = pygame.font.Font(None, 80)
-    tridim = Tridim(windowx/2, 5*windowy/8)
+    tridim = Tridim(Vector3([windowx/2, windowy/2, -1000]))
     camera = Objects.Camera().shift(Vector3([-100, 0, 0]))
-    PC = CreateObject.CreatePC().shift(Vector3([windowx/2, windowy/2, 200]))
-    Player = CreateObject.CreatePlayer().shift(Vector3([300, 500, 200])).rotate(Vector3([0, 90, 0]))
+    PC = CreateObject.CreatePC().shift(Vector3([windowx/2, windowy/2, 500]))
+    Player = CreateObject.CreatePlayer().shift(Vector3([300, 500, 400])).rotate(Vector3([0, 90, 0]))
     #-------------------------------
     Hierarchy = [PC, Player]
     camera.setHierarchy(Hierarchy)

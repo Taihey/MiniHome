@@ -395,8 +395,8 @@ class Camera(Object):
             obj.viewUnitVectory = self.convertAxis(obj.unitVectory, "unitVectory")
             obj.viewUnitVectorz = self.convertAxis(obj.unitVectorz, "unitVectorz")
             
-        #画面上のzが大きい順に並べる
-        self.sort(self.hierarchy)
+        #画面上の位置と投資投影の視点との距離が大きい順に並べる
+        self.sort(self.hierarchy, tridim)
         
         #1つずつ描画
         for obj in self.hierarchy:
@@ -425,22 +425,22 @@ class Camera(Object):
                     pygame.draw.polygon(bg, obj.color, [t1, t2, t3, t4])
                     pygame.draw.polygon(bg, obj.edgeColor, [t1, t2, t3, t4], width = 3)
     
-    #hierarchyをviewPosition.vec[2]が大きい順に並べ替える
-    def sort(self, hierarchy):
-        def merge_sort(list, start, end):
+    #hierarchyをviewPosition.vec とtridim.perspective.vecとの距離が大きい順に並べ替える
+    def sort(self, hierarchy, tridim):
+        def merge_sort(list, start, end, tridim):
             if end-1 == start:
                 return
             
             mid = int((start + end)/2)
             
             #一つになるまで分割する
-            merge_sort(list, start, mid)
-            merge_sort(list, mid, end)
+            merge_sort(list, start, mid, tridim)
+            merge_sort(list, mid, end, tridim)
             
-            merge(list, start, mid, end)
+            merge(list, start, mid, end, tridim)
         
         #二つの配列を結合する 
-        def merge(list, start, mid, end):
+        def merge(list, start, mid, end, tridim):
             #分割
             nl = mid - start
             nr = end - mid
@@ -453,7 +453,7 @@ class Camera(Object):
             #マージ
             lIndex = 0
             rIndex = 0
-            #そのオブジェクトのカメラからのz座標を比べる
+            #そのオブジェクトの透視投影からの距離を比較する
             for i in range(start, end):
                 if rIndex == nr:
                     list[i] = left[lIndex]
@@ -461,14 +461,14 @@ class Camera(Object):
                 elif lIndex == nl:
                     list[i] = right[rIndex]
                     rIndex += 1
-                elif (left[lIndex].viewPosition.vec[2] > right[rIndex].viewPosition.vec[2]):
+                elif (left[lIndex].viewPosition.distance(tridim.perspective) > right[rIndex].viewPosition.distance(tridim.perspective)):
                     list[i] = left[lIndex]
                     lIndex += 1
-                elif (left[lIndex].viewPosition.vec[2] <= right[rIndex].viewPosition.vec[2]):
+                elif (left[lIndex].viewPosition.distance(tridim.perspective) <= right[rIndex].viewPosition.distance(tridim.perspective)):
                     list[i] = right[rIndex]
                     rIndex += 1
         
-        merge_sort(hierarchy, 0, len(hierarchy))
+        merge_sort(hierarchy, 0, len(hierarchy), tridim)
         return hierarchy
     
     #カメラから見た頂点を求める
