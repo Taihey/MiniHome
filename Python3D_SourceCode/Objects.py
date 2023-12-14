@@ -6,6 +6,7 @@ from System import *
 class Object:
     def __init__(self):
         self.tag = "obj"
+        self.id = "obj"
         #基準となる位置
         self.position = Vector3([0, 0, 0])
         #親オブジェクトはグローバル、子オブジェクトはローカル
@@ -55,10 +56,16 @@ class Object:
             
             self.children[i].setChildPos()
     
+    def setID(self, id):
+        self.id = id
+    
     def shift(self, vector):          
-        self.position += vector
-        self.setChildPos()
-        return self
+        if self.parent == None:
+            self.position += vector
+            self.setChildPos()
+            return self
+        else:
+            self.parent.shift(vector)
     
     def setColor(self, col, edgeCol):
         self.color = col
@@ -223,34 +230,6 @@ class Object:
         self.position = Vector3([posx, posy, 0])
         self.setChildPos()
     
-    #グローバル座標を、このオブジェクトのローカル座標に変換
-    #衝突判定用
-    def convertLocal(self, position):
-        relPos = position - self.position
-        ans = [0, 0, 0]
-        
-        A = [[self.unitVectorx.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
-             [self.unitVectorx.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
-             [self.unitVectorx.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]]
-        
-        X = [[relPos.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
-             [relPos.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
-             [relPos.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]]
-
-        Y = [[self.unitVectorx.vec[0], relPos.vec[0], self.unitVectorz.vec[0]], 
-             [self.unitVectorx.vec[1], relPos.vec[1], self.unitVectorz.vec[1]], 
-             [self.unitVectorx.vec[2], relPos.vec[2], self.unitVectorz.vec[2]]]
-        
-        Z = [[self.unitVectorx.vec[0], self.unitVectory.vec[0], relPos.vec[0]], 
-             [self.unitVectorx.vec[1], self.unitVectory.vec[1], relPos.vec[1]], 
-             [self.unitVectorx.vec[2], self.unitVectory.vec[2], relPos.vec[2]]]
-        
-        #クラーメルの定理
-        ans[0] = det(X) / det(A)
-        ans[1] = det(Y) / det(A)
-        ans[2] = det(Z) / det(A)
-        return Vector3(ans)       #Colliderに渡す
-
 class Rect(Object):
     def __init__(self, lx, ly):
         super().__init__()

@@ -96,7 +96,7 @@ class Vector3:
         return Vector3(unitVectorz)
     
 #3次元座標をスクリーン上の2次元座標に変換する
-#投資投影変換
+#透視投影変換
 class Tridim:
     def __init__(self, perspective):
         #視点の座標(画面上)
