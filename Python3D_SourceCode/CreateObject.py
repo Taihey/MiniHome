@@ -4,12 +4,12 @@ import math
 
 def CreatePC():
     #キーボード
-    cube = Objects.Cube(100, 10, 80).setColor(LGREEN, AQUA)
+    cube = Objects.Cube(100, 10, 80).setColor(GRAY, AQUA)
     #画面
-    cube2 = Objects.Cube(100, 80, 10).setColor(LGREEN, AQUA)
+    cube2 = Objects.Cube(100, 80, 10).setColor(GRAY, AQUA)
     rect = Objects.Rect(80, 64)
     
-    cube2.setChild(rect, Vector3([0, 0, -10]), Vector3([0, 0, 0]))
+    cube2.setChild(rect, Vector3([0, 0, -10]), Vector3([0, 0, 15]))  #描画しやすいように少し画面を前に出す
     #cube2.rotate(Vector3([-30, 0, 0]))
     
     cube.setChild(cube2, Vector3([0, -10, 80]), Vector3([0, 80, -10]))
@@ -20,8 +20,9 @@ def CreatePC():
             return
         
         def play(self):
-            if cube2.rotation.vec[0] <= 90 * math.pi / 180:
-                cube2.rotate(Vector3([5, 0, 0]))
+            print(cube2.rotation.vec[0] * 180/math.pi)
+            if cube2.rotation.vec[0] < 90 * math.pi / 180:  
+                cube2.rotate(Vector3([10, 0, 0]))
             else:
                 cube2.rotation.vec[0] = 90 * math.pi / 180
     

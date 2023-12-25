@@ -28,6 +28,9 @@ class Object:
         self.viewUnitVectorx = Vector3([1, 0, 0])
         self.viewUnitVectory = Vector3([0, 1, 0])
         self.viewUnitVectorz = Vector3([0, 0, 1])
+        #カメラの視点から一番近い点の距離の2乗、描画順を決める。
+        #頂点のないオブジェクトは毎回先に描画処理されるが、問題ない
+        self.nearestDist = 0  
         
         self.color = GRAY
         self.edgeColor = BLUE
@@ -373,9 +376,21 @@ class Camera(Object):
             obj.viewUnitVectorx = self.convertAxis(obj.unitVectorx, "unitVectorx")
             obj.viewUnitVectory = self.convertAxis(obj.unitVectory, "unitVectory")
             obj.viewUnitVectorz = self.convertAxis(obj.unitVectorz, "unitVectorz")
-            
-        #画面上の位置と投資投影の視点との距離が大きい順に並べる
-        self.sort(self.hierarchy, tridim)
+        
+        #頂点のうち、視点から一番近いzを求める
+        for obj in self.hierarchy:
+            tops = self.getTops(obj)
+            nearestDist = None
+            for top in tops:
+                if nearestDist == None:
+                    nearestDist = top.distance(tridim.perspective)
+                elif top.distance(tridim.perspective) < nearestDist:
+                    nearestDist = top.distance(tridim.perspective)
+            if nearestDist != None:
+                obj.nearestDist = nearestDist
+        
+        #最小のzが大きい順に並べる
+        self.sort(self.hierarchy)
         
         #1つずつ描画
         for obj in self.hierarchy:
@@ -405,21 +420,21 @@ class Camera(Object):
                     pygame.draw.polygon(bg, obj.edgeColor, [t1, t2, t3, t4], width = 3)
     
     #hierarchyをviewPosition.vec とtridim.perspective.vecとの距離が大きい順に並べ替える
-    def sort(self, hierarchy, tridim):
-        def merge_sort(list, start, end, tridim):
+    def sort(self, hierarchy):
+        def merge_sort(list, start, end):
             if end-1 == start:
                 return
             
             mid = int((start + end)/2)
             
             #一つになるまで分割する
-            merge_sort(list, start, mid, tridim)
-            merge_sort(list, mid, end, tridim)
+            merge_sort(list, start, mid)
+            merge_sort(list, mid, end)
             
-            merge(list, start, mid, end, tridim)
+            merge(list, start, mid, end)
         
         #二つの配列を結合する 
-        def merge(list, start, mid, end, tridim):
+        def merge(list, start, mid, end):
             #分割
             nl = mid - start
             nr = end - mid
@@ -440,14 +455,14 @@ class Camera(Object):
                 elif lIndex == nl:
                     list[i] = right[rIndex]
                     rIndex += 1
-                elif (left[lIndex].viewPosition.distance(tridim.perspective) > right[rIndex].viewPosition.distance(tridim.perspective)):
+                elif left[lIndex].nearestDist > right[rIndex].nearestDist:
                     list[i] = left[lIndex]
                     lIndex += 1
-                elif (left[lIndex].viewPosition.distance(tridim.perspective) <= right[rIndex].viewPosition.distance(tridim.perspective)):
+                elif left[lIndex].nearestDist <= right[rIndex].nearestDist:
                     list[i] = right[rIndex]
                     rIndex += 1
         
-        merge_sort(hierarchy, 0, len(hierarchy), tridim)
+        merge_sort(hierarchy, 0, len(hierarchy))
         return hierarchy
     
     #カメラから見た頂点を求める

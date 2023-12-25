@@ -65,7 +65,7 @@ class Vector3:
                 return Vector3(ans)
         raise TypeError()
     
-    #二つの位置間の距離の2上を返す
+    #二つの位置間の距離の2乗を返す
     def distance(self, vec1):
         return (
             (vec1.vec[0] - self.vec[0])*(vec1.vec[0] - self.vec[0]) +
