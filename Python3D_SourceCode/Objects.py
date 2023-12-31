@@ -120,15 +120,15 @@ class Object:
             self.unitVectorz = unitVectorz
             return self
     
-    #子も同じ角度回転させる。
-    def rotateChildren(self, arg):
+    #子オブジェクト
+    def rotateChildren(self):
         if len(self.children) == 0:
             return
         
         for child in self.children:
             #子オブジェクトのローカル回転角で回転させる
             child.setUnitVector()
-            child.rotateChildren(arg)
+            child.rotateChildren()
     
     #これ以下の階層のオブジェクトを回転させる
     def rotate(self, arg):
@@ -136,7 +136,7 @@ class Object:
         
         self.rotation += arg
         self.setUnitVector()
-        self.rotateChildren(arg)
+        self.rotateChildren()
         
         #子オブジェクトの場合
         if self.parent != None:
@@ -150,7 +150,7 @@ class Object:
         
         self.rotation = arg
         self.setUnitVector()
-        self.rotateChildren(arg)
+        self.rotateChildren()
         
         if self.parent != None:
             self.parent.setChildPos()
@@ -328,7 +328,7 @@ class Camera(Object):
         for child in obj.children:
             self.hierarchy.append(child)
             self.setChildHierarchy(child)
-      
+
     def setHierarchy(self, hierarchy):
         for obj in hierarchy:
             self.hierarchy.append(obj)
@@ -346,21 +346,29 @@ class Camera(Object):
             relPos = position - self.position
         ans = [0, 0, 0]
         
-        A = [[self.unitVectorx.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
-             [self.unitVectorx.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
-             [self.unitVectorx.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]]
+        A = [
+            [self.unitVectorx.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
+            [self.unitVectorx.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
+            [self.unitVectorx.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]
+            ]
         
-        X = [[relPos.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
-             [relPos.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
-             [relPos.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]]
+        X = [
+            [relPos.vec[0], self.unitVectory.vec[0], self.unitVectorz.vec[0]], 
+            [relPos.vec[1], self.unitVectory.vec[1], self.unitVectorz.vec[1]], 
+            [relPos.vec[2], self.unitVectory.vec[2], self.unitVectorz.vec[2]]
+            ]
 
-        Y = [[self.unitVectorx.vec[0], relPos.vec[0], self.unitVectorz.vec[0]], 
-             [self.unitVectorx.vec[1], relPos.vec[1], self.unitVectorz.vec[1]], 
-             [self.unitVectorx.vec[2], relPos.vec[2], self.unitVectorz.vec[2]]]
+        Y = [
+            [self.unitVectorx.vec[0], relPos.vec[0], self.unitVectorz.vec[0]], 
+            [self.unitVectorx.vec[1], relPos.vec[1], self.unitVectorz.vec[1]], 
+            [self.unitVectorx.vec[2], relPos.vec[2], self.unitVectorz.vec[2]]
+            ]
         
-        Z = [[self.unitVectorx.vec[0], self.unitVectory.vec[0], relPos.vec[0]], 
-             [self.unitVectorx.vec[1], self.unitVectory.vec[1], relPos.vec[1]], 
-             [self.unitVectorx.vec[2], self.unitVectory.vec[2], relPos.vec[2]]]
+        Z = [
+            [self.unitVectorx.vec[0], self.unitVectory.vec[0], relPos.vec[0]], 
+            [self.unitVectorx.vec[1], self.unitVectory.vec[1], relPos.vec[1]], 
+            [self.unitVectorx.vec[2], self.unitVectory.vec[2], relPos.vec[2]]
+            ]
         
         #クラーメルの定理
         ans[0] = det(X) / det(A)
@@ -498,3 +506,9 @@ class Camera(Object):
             ]
             
         return tops
+    
+    def chase(self, obj, dist):
+        self.position = obj.position - (self.unitVectorz * dist
+            ) - (self.unitVectory * (windowy/2)) - (
+                self.unitVectorx * (windowx/2)
+            )

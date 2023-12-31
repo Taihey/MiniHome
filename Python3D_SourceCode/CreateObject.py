@@ -20,7 +20,6 @@ def CreatePC():
             return
         
         def play(self):
-            print(cube2.rotation.vec[0] * 180/math.pi)
             if cube2.rotation.vec[0] < 90 * math.pi / 180:  
                 cube2.rotate(Vector3([10, 0, 0]))
             else:
@@ -39,6 +38,8 @@ def CreatePlayer():
     legL = Objects.Cube(50, 100, 50).setColor(YELLOW, RED)
     legR = Objects.Cube(50, 100, 50).setColor(YELLOW, RED)
     
+    eye1 = Objects.Rect(15, 15)
+    eye2 = Objects.Rect(15, 15)
     armL2 = Objects.Cube(20, 100, 20).setColor(GRAY, RED)
     armR2 = Objects.Cube(20, 100, 20).setColor(GRAY, RED)
     legL2 = Objects.Cube(40, 100, 40).setColor(YELLOW, RED)
@@ -54,21 +55,25 @@ def CreatePlayer():
     body.setChild(legL, Vector3([-60, 150, 0]), Vector3([0, -100, 0]))
     body.setChild(legR, Vector3([60, 150, 0]), Vector3([0, -100, 0]))
     
+    head.setChild(eye1, Vector3([-25, -25, 50]), Vector3([0, 0, -15]))
+    head.setChild(eye2, Vector3([25, -25, 50]), Vector3([0, 0, -15]))
     armL.setChild(armL2, Vector3([0, 80, 0]), Vector3([0, -80, 0]))
     armR.setChild(armR2, Vector3([0, 80, 0]), Vector3([0, -80, 0]))
     legL.setChild(legL2, Vector3([0, 100, 0]), Vector3([0, -100, 0]))
     legR.setChild(legR2, Vector3([0, 100, 0]), Vector3([0, -100, 0]))
     
-    legL2.setChild(footL, Vector3([0, 100, 0]), Vector3([0, -10, -20]))
-    legR2.setChild(footR, Vector3([0, 100, 0]), Vector3([0, -10, -20]))
+    legL2.setChild(footL, Vector3([0, 100, 0]), Vector3([0, -20, -20]))
+    legR2.setChild(footR, Vector3([0, 100, 0]), Vector3([0, -20, -20]))
     
     class Stay:
         def __init__(self):
             return
         
         def play(self):
-            core.motion["run"].__init__()         #他のアニメーションを初期化する
+            #他のアニメーションを初期化する
+            core.motion["run"].__init__()         
             core.motion["walk"].__init__()
+            
             body.setRotation(Vector3([0, 0, 0]))
             head.setRotation(Vector3([0, 0, 0]))
             armL.setRotation(Vector3([0, 0, 0]))
@@ -89,6 +94,8 @@ def CreatePlayer():
             return
         
         def play(self):
+            core.motion["run"].__init__()  
+            
             if self.playing == 0:
                 self.playing = 1
                 armR2.setRotation(Vector3([10, 0, 0]))
@@ -129,14 +136,15 @@ def CreatePlayer():
             return
         
         def play(self):
+            core.motion["walk"].__init__()
             
             if self.playing == 0:
                 self.playing = 1
                 body.rotate(Vector3([-10, 0, 0]))
                 legR.rotate(Vector3([10, 0, 0]))
                 legL.rotate(Vector3([10, 0, 0]))
-                armR.rotate(Vector3([-30, 0, 0]))
-                armL.rotate(Vector3([-30, 0, 0]))
+                armR.rotate(Vector3([-30, 0, -10]))
+                armL.rotate(Vector3([-30, 0, 10]))
                 armR2.rotate(Vector3([120, 0, 0]))
                 armL2.rotate(Vector3([120, 0, 0]))
                 legL2.setRotation(Vector3([-100, 0, 0]))

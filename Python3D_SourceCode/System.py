@@ -28,6 +28,18 @@ class Vector3:
     def __init__(self, vec):
         self.vec = vec
     
+    def x(self):
+        return Vector3([self.vec[0], 0, 0])
+    
+    def y(self):
+        return Vector3([0, self.vec[1], 0])
+    
+    def z(self):
+        return Vector3([0, 0, self.vec[2]])
+    
+    def xz(self):
+        return Vector3([self.vec[0], 0, self.vec[2]])
+    
     #演算子のオーバーロード
     # +
     def __add__(self, other):
@@ -72,6 +84,9 @@ class Vector3:
             (vec1.vec[1] - self.vec[1])*(vec1.vec[1] - self.vec[1]) +
             (vec1.vec[2] - self.vec[2])*(vec1.vec[2] - self.vec[2])
         )
+    
+    def normalize(self):
+        return self * (1/math.sqrt(self.distance(Vector3([0, 0, 0]))))
     
     #回転量から、単位ベクトルを求める。
     def unitVectorx(self, arg):
