@@ -5,23 +5,24 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-root = Tk()
-root.geometry('1200x1000')
-root.resizable(False, False)
-
-scene = PhotoImage(file="./picture/screen.png").subsample(2, 2)
-#ボタンの画像
-btnImage = PhotoImage(file="./picture/screen.png").subsample(45, 200)
-
-canvas = Canvas(root)
-canvas.pack(fill="both", ipadx=10, ipady=10)
-canvas.create_image(500, 500, image=scene)
-
 class Window:
+    def createRoot(self):
+        self.root = Tk()
+        self.root.geometry('1200x1000')
+        self.root.resizable(False, False)
+
+        self.scene = PhotoImage(file="./picture/screen.png").subsample(2, 2)
+        #ボタンの画像
+        self.btnImage = PhotoImage(file="./picture/screen.png").subsample(45, 200)
+
+        self.canvas = Canvas(self.root)
+        self.canvas.pack(fill="both", ipadx=10, ipady=10)
+        self.canvas.create_image(500, 500, image=self.scene)
+        
     def putDateCommbobox(self):
         #日付を選択
         self.selFrame = ttk.Frame(
-            canvas, 
+            self.canvas, 
             height=30, borderwidth=2, relief='ridge',
             )
         self.selFrame.pack(fill='x', side='top', padx=10, pady=10)
@@ -37,7 +38,7 @@ class Window:
         
     def putIndexCombobox(self):
         self.indFrame = ttk.Frame(
-            canvas, 
+            self.canvas, 
             height=30, borderwidth=2, relief='ridge',
             )
         self.indFrame.pack(fill='x', side='top', padx=10, pady=10)
@@ -54,7 +55,7 @@ class Window:
     def putRecordTree(self):
         #データを表示する場所を用意
         self.showFrame = ttk.Frame(
-            canvas, 
+            self.canvas, 
             height=900, borderwidth=2, relief='ridge'
             )
         self.showFrame.pack(fill='x', padx=10, pady=10)
@@ -85,7 +86,7 @@ class Window:
     def putFoodTree(self):
         #データを表示する場所を用意
         self.showFoodFrame = ttk.Frame(
-            canvas, 
+            self.canvas, 
             height=900, borderwidth=2, relief='ridge'
             )
         self.showFoodFrame.pack(fill='x', padx=10, pady=10)
@@ -185,7 +186,7 @@ class Window:
         return food
     
     def createGUI(self):
-        root.mainloop()
+        self.root.mainloop()
     
     #降順にソートした日付を返す
     def getDate(self):
@@ -198,25 +199,26 @@ class Window:
 
 class InputRecord(Window):
     def __init__(self):
-        root.title("食事の記録")
+        self.createRoot()
+        self.root.title("食事の記録")
         
         #終了ボタン
-        self.menuFrame = ttk.Frame(canvas, borderwidth=2, relief='ridge')
+        self.menuFrame = ttk.Frame(self.canvas, borderwidth=2, relief='ridge')
         self.menuFrame.pack(side="top", pady=10)
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=root.destroy, image=btnImage, compound='center'
+            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
         #タイトル
-        self.titleLabel = ttk.Label(canvas, text="食事の記録を入力してください", font=("",18))
+        self.titleLabel = ttk.Label(self.canvas, text="食事の記録を入力してください", font=("",18))
         self.titleLabel.pack(side="top", pady=10)
         
         # 入力欄
         self.inputFrame = ttk.Frame(
-            canvas, 
+            self.canvas, 
             height=30, borderwidth=2, relief='ridge',
             )
         self.inputFrame.pack(fill='x',side='top', padx=10, pady=10)
@@ -262,7 +264,7 @@ class InputRecord(Window):
         
         #日付の選択のガイド
         self.titleLabel2 = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="記録を見たい日付を選択してください", font=("",18)
             )
         self.titleLabel2.pack(side="top", pady=10)
@@ -455,21 +457,22 @@ class InputRecord(Window):
 
 class EditRecord(InputRecord):
     def __init__(self):
-        root.title("記録の編集")
+        self.createRoot()
+        self.root.title("記録の編集")
         
         #終了ボタン
-        self.menuFrame = ttk.Frame(canvas, borderwidth=2, relief='ridge')
+        self.menuFrame = ttk.Frame(self.canvas, borderwidth=2, relief='ridge')
         self.menuFrame.pack(side="top", pady=10)
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=root.destroy, image=btnImage, compound='center'
+            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
             )
         self.quitButton.pack(side='right')
         
         #タイトル
         self.titleLabel = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="編集する記録の日付を選択してください", font=("",18)
             )
         self.titleLabel.pack(side="top", pady=10)
@@ -481,7 +484,7 @@ class EditRecord(InputRecord):
         self.putRecordTree()
         
         self.selIndexLabel = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="削除するインデックスを選択してください", font=("",18)
             )
         self.selIndexLabel.pack(side="top", pady=10)
@@ -533,31 +536,32 @@ class EditRecord(InputRecord):
         
         self.delButton["command"] = self.deleteIndex
         
-        root.mainloop()
+        self.root.mainloop()
 
 class InputFood(Window):
     def __init__(self):
-        root.title("食材の追加")
+        self.createRoot()
+        self.root.title("食材の追加")
         
         #終了ボタン
-        self.menuFrame = ttk.Frame(canvas, borderwidth=2, relief='ridge')
+        self.menuFrame = ttk.Frame(self.canvas, borderwidth=2, relief='ridge')
         self.menuFrame.pack(side="top", pady=10)
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=root.destroy, image=btnImage, compound='center'
+            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
         #タイトル
         self.titleLabel = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="追加する食材を入力してください", font=("",18)
             )
         self.titleLabel.pack(side="top", pady=10)
         
         #入力欄
-        self.foodFrame = ttk.Frame(canvas, height=160, borderwidth=2, relief='ridge')
+        self.foodFrame = ttk.Frame(self.canvas, height=160, borderwidth=2, relief='ridge')
         self.foodFrame.pack(fill='x',side='top')
         self.gredLabel = ttk.Label(self.foodFrame, font=("",14), text='食材:')
         self.gredLabel.place(x=0, y=0)
@@ -644,25 +648,26 @@ class InputFood(Window):
     def createGUI(self):
         self.foodAddButton['command'] = self.addFood
         self.insertFoodTree()
-        root.mainloop()
+        self.root.mainloop()
 
 class EditFood(InputFood):
     def __init__(self):
-        root.title("食材の編集")
+        self.createRoot()
+        self.root.title("食材の編集")
         
         #終了ボタン
-        self.menuFrame = ttk.Frame(canvas, borderwidth=2, relief='ridge')
+        self.menuFrame = ttk.Frame(self.canvas, borderwidth=2, relief='ridge')
         self.menuFrame.pack(side="top", pady=10)
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=root.destroy, image=btnImage, compound='center'
+            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
         #タイトル
         self.titleLabel = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="食材の一覧", font=("",18)
             )
         self.titleLabel.pack(side="top", pady=10)
@@ -671,7 +676,7 @@ class EditFood(InputFood):
         self.putFoodTree()
         
         self.subTitleLabel = ttk.Label(
-            canvas, 
+            self.canvas, 
             text="削除する食材のindexを選択してください", font=("",18)
             )
         self.subTitleLabel.pack(side="top", pady=10)
@@ -717,6 +722,7 @@ class EditFood(InputFood):
         
         self.delButton['command'] = self.deleteIndex
         
-        root.mainloop()
+        self.root.mainloop()
 
-EditFood().createGUI()
+if __name__ == '__main__':
+    EditFood().createGUI()

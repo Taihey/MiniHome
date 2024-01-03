@@ -15,6 +15,9 @@ GRAY  = (125, 125, 125)
 AQUA =  (  0, 125, 125)
 YELLOW = (255, 255,  0) 
 
+#重力加速度
+g = 1
+
 #3次正方行列の行列式
 def det(A):
     return (
@@ -37,7 +40,10 @@ class Vector3:
     def z(self):
         return Vector3([0, 0, self.vec[2]])
     
-    def xz(self):
+    def xy(self):
+        return Vector3([self.vec[0], self.vec[1], 0])
+        
+    def zx(self):
         return Vector3([self.vec[0], 0, self.vec[2]])
     
     #演算子のオーバーロード
@@ -126,5 +132,13 @@ class Tridim:
     
         return [xr, yr]
 
+def judgeCollision(hierarchy):
+    for i in range(len(hierarchy)):
+        if hierarchy[i].haveCollider:
+            for j in range(i + 1, len(hierarchy)):
+                if hierarchy[j].haveCollider:
+                    if hierarchy[i].collider.judge(hierarchy[j].collider):
+                        hierarchy[i].onCollision(hierarchy[j])
+                        hierarchy[j].onCollision(hierarchy[i])
 
 

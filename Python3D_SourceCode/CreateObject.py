@@ -10,7 +10,6 @@ def CreatePC():
     rect = Objects.Rect(80, 64)
     
     cube2.setChild(rect, Vector3([0, 0, -10]), Vector3([0, 0, 15]))  #描画しやすいように少し画面を前に出す
-    #cube2.rotate(Vector3([-30, 0, 0]))
     
     cube.setChild(cube2, Vector3([0, -10, 80]), Vector3([0, 80, -10]))
     
@@ -26,6 +25,12 @@ def CreatePC():
                 cube2.rotation.vec[0] = 90 * math.pi / 180
     
     cube.setMotion("close", Close())
+    
+    #Playerが近づいているかを判定
+    cube.setCollider("box"
+        ).setColliderSize(Vector3([300, 10, 500]))
+    
+    cube.activeRigid()
     
     return cube
 
@@ -185,4 +190,72 @@ def CreatePlayer():
     core.setMotion("stay", Stay())
     core.setMotion("walk", Walk())
     core.setMotion("run", Run())    
+    
+    core.setCollider("box"
+        ).setColliderSize(Vector3([100, 420, 100])
+        ).shiftCollider(Vector3([0, 170, 0]))
+        
+    core.activeRigid()
+    core.setID("player")
+    
+    return core
+
+#cubeをつなげた床を作る
+#一辺の長さの半分を指定する
+def CreateFloor(l):
+    core = Objects.Object()
+    
+    #10X10の床
+    floors = []
+    xlen = 10
+    zlen = 10
+    for i in range(xlen):
+        floors.append([])
+        for j in range(zlen):
+            floors[i].append(Objects.Cube(l, l, l).setColor(AQUA, BLUE))
+            
+            #coreから見たそのcubeの位置
+            distx = None
+            distz = None
+            
+            if xlen % 2 == 0:
+                distx = (-2*l * (xlen/2) + l) + 2*l * i
+            else:
+                distx = (-2*l * int(xlen/2)) + 2*l * i
+            
+            if zlen % 2 == 0:
+                distz = (-2*l * (zlen/2) + l) + 2*l * j
+            else:
+                distz = (-2*l * int(zlen/2)) + 2*l * j
+                
+            core.setChild(floors[i][j], Vector3([distx, 0, distz]), Vector3([0, 0, 0]))
+            
+    core.setCollider("box").setColliderSize(Vector3([l * xlen, l, l * zlen]))
+    
+    core.setID("floor")
+    
+    return core
+
+def CreateDesk():
+    core = Objects.Object()
+    board = Objects.Cube(150, 20, 150).setColor(YELLOW, PERPLE)
+    col1 = Objects.Cube(10, 130, 10).setColor(YELLOW, PERPLE)
+    col2 = Objects.Cube(10, 130, 10).setColor(YELLOW, PERPLE)
+    col3 = Objects.Cube(10, 130, 10).setColor(YELLOW, PERPLE)
+    col4 = Objects.Cube(10, 130, 10).setColor(YELLOW, PERPLE)
+    
+    core.setChild(board, Vector3([0, 0, 0]), Vector3([0, 0, 0]))
+    board.setChild(col1, Vector3([-130, 20, -130]), Vector3([0, -130, 0]))
+    board.setChild(col2, Vector3([130, 20, -130]), Vector3([0, -130, 0]))
+    board.setChild(col3, Vector3([130, 20, 130]), Vector3([0, -130, 0]))
+    board.setChild(col4, Vector3([-130, 20, 130]), Vector3([0, -130, 0]))
+    
+    core.setCollider("box"
+        ).setColliderSize(Vector3([150, 150, 150])
+        ).shiftCollider(Vector3([0, 130, 0]))
+    
+    core.activeRigid()
+    
+    core.setID("floor")
+    
     return core

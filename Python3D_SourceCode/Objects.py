@@ -1,6 +1,7 @@
 import pygame
 import math
 from System import *
+import Component
 
 #ローカル座標をいじる
 class Object:
@@ -35,9 +36,21 @@ class Object:
         self.color = GRAY
         self.edgeColor = BLUE
         
+        #このオブジェクトの性質(Playerとか)
+        self.character = None
+        
         #アニメーション キーと関数をもつオブジェクトを格納
         #その中のplay関数で動きを指定
         self.motion = {}
+        
+        #当たり判定
+        self.haveCollider = False
+        self.collider = None
+        
+        #重力が働くか
+        self.isRigid = False
+        self.velosity = Vector3([0, 0, 0])
+        self.fallVel = Vector3([0, 0, 0])
     
     def setChild(self, child, vec, vec2):
         self.children.append(child)
@@ -61,6 +74,7 @@ class Object:
     
     def setID(self, id):
         self.id = id
+        return self
     
     def shift(self, vector):          
         if self.parent == None:
@@ -233,6 +247,49 @@ class Object:
         self.position = Vector3([posx, posy, 0])
         self.setChildPos()
     
+    def setCollider(self, string):
+        self.haveCollider = True
+        if string == "box":
+            self.collider = Component.BoxCollider(self)
+        return self
+    
+    def shiftCollider(self, vec):
+        self.collider.setPosition(vec)
+        return self
+    
+    def setColliderSize(self, vec):
+        self.collider.setSize(vec)
+        return self
+
+    #self.haveCollider = Trueでないと実行されない
+    def onCollision(self, opponent):
+        #自身は重力が働かない床であるとき
+        if self.id == "floor":
+            if opponent.collider.tag == "box":
+                #上からぶつかっているときの重なりの大きさ
+                deltaYU = (opponent.position.vec[1] + opponent.collider.position.vec[1] + opponent.collider.size.vec[1]
+                        ) - (self.position.vec[1] + self.collider.position.vec[1] - self.collider.size.vec[1])
+                #上からぶつかっていたら上に着地
+                if deltaYU <= (opponent.velosity + opponent.fallVel).vec[1]:
+                    opponent.shift(Vector3([0, -deltaYU, 0]))
+                    opponent.fallVel = Vector3([0, 0, 0])
+                #横からぶつかったときは自由落下だけする。
+                else:
+                    opponent.shift(opponent.velosity * (-1))
+            
+        if self.character != None:
+            self.character.onCollision(opponent)
+    
+    def activeRigid(self):
+        self.isRigid = True
+        return self
+    
+    #重力による自由落下
+    def move(self):
+        if self.isRigid:
+            self.fallVel += Vector3([0, g, 0])
+            self.shift(self.fallVel).shift(self.velosity)
+    
 class Rect(Object):
     def __init__(self, lx, ly):
         super().__init__()
@@ -377,6 +434,7 @@ class Camera(Object):
         return Vector3(ans)
     
     def display(self, bg, tridim):
+        border = tridim.perspective.vec[2]
         tops = []
         #すべてのオブジェクトの位置、ローカル座標をカメラのローカル座標に変換
         for obj in self.hierarchy:
@@ -385,20 +443,22 @@ class Camera(Object):
             obj.viewUnitVectory = self.convertAxis(obj.unitVectory, "unitVectory")
             obj.viewUnitVectorz = self.convertAxis(obj.unitVectorz, "unitVectorz")
         
-        #頂点のうち、視点から一番近いzを求める
+        #頂点のうち、スクリーン(z=0)から一番近いzを求める
         for obj in self.hierarchy:
             tops = self.getTops(obj)
             nearestDist = None
             for top in tops:
                 if nearestDist == None:
-                    nearestDist = top.distance(tridim.perspective)
-                elif top.distance(tridim.perspective) < nearestDist:
-                    nearestDist = top.distance(tridim.perspective)
+                    nearestDist = top.distance(tridim.perspective.xy())
+                elif top.distance(tridim.perspective.xy()) < nearestDist:
+                    nearestDist = top.distance(tridim.perspective.xy())
             if nearestDist != None:
                 obj.nearestDist = nearestDist
         
         #最小のzが大きい順に並べる
-        self.sort(self.hierarchy)
+        #self.sort(self.hierarchy)
+        #中心の座標が近い順に並べる
+        self.sortD(self.hierarchy, tridim)
         
         #1つずつ描画
         for obj in self.hierarchy:
@@ -406,7 +466,7 @@ class Camera(Object):
                 tops = self.getTops(obj)
                 #各面に対して、描画するかを判定、描画する
                 for plane in obj.planes:
-                    if tops[plane[0]].vec[2]>0 and tops[plane[1]].vec[2]>0 and tops[plane[2]].vec[2]>0 and tops[plane[3]].vec[2]>0:
+                    if tops[plane[0]].vec[2]>border and tops[plane[1]].vec[2]>border and tops[plane[2]].vec[2]>border and tops[plane[3]].vec[2]>border:
                         #４つの頂点の画面上の座標
                         t1 = tridim.dim(tops[plane[0]])
                         t2 = tridim.dim(tops[plane[1]])
@@ -467,6 +527,55 @@ class Camera(Object):
                     list[i] = left[lIndex]
                     lIndex += 1
                 elif left[lIndex].nearestDist <= right[rIndex].nearestDist:
+                    list[i] = right[rIndex]
+                    rIndex += 1
+        
+        merge_sort(hierarchy, 0, len(hierarchy))
+        return hierarchy
+    
+    #中心の座標が近い順に並べる
+    def sortD(self, hierarchy, tridim):
+        def merge_sort(list, start, end):
+            if end-1 == start:
+                return
+            
+            mid = int((start + end)/2)
+            
+            #一つになるまで分割する
+            merge_sort(list, start, mid)
+            merge_sort(list, mid, end)
+            
+            merge(list, start, mid, end)
+        
+        #二つの配列を結合する 
+        def merge(list, start, mid, end):
+            #分割
+            nl = mid - start
+            nr = end - mid
+            left = []
+            right = []
+            for i in range(nl):
+                left.append(list[start + i])
+            for i in range(nr):
+                right.append(list[mid + i])
+            #マージ
+            lIndex = 0
+            rIndex = 0
+            #比較する距離
+            def dist(obj):
+                return obj.viewPosition.distance(tridim.perspective)
+            #そのオブジェクトの透視投影からの距離を比較する
+            for i in range(start, end):
+                if rIndex == nr:
+                    list[i] = left[lIndex]
+                    lIndex += 1
+                elif lIndex == nl:
+                    list[i] = right[rIndex]
+                    rIndex += 1
+                elif dist(left[lIndex]) > dist(right[rIndex]):
+                    list[i] = left[lIndex]
+                    lIndex += 1
+                elif dist(left[lIndex]) <= dist(right[rIndex]):
                     list[i] = right[rIndex]
                     rIndex += 1
         
