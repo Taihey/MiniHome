@@ -6,6 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Window:
+    def __init__(self):
+        #rootをdestroyしたかしていないか
+        self.generated = False
+        
     def createRoot(self):
         self.root = Tk()
         self.root.geometry('1200x1000')
@@ -18,6 +22,12 @@ class Window:
         self.canvas = Canvas(self.root)
         self.canvas.pack(fill="both", ipadx=10, ipady=10)
         self.canvas.create_image(500, 500, image=self.scene)
+    
+    #breakしたrootを作成する
+    def init(self):
+        self.root = Tk()
+        self.root.geometry('1200x1000')
+        self.root.resizable(False, False)
         
     def putDateCommbobox(self):
         #日付を選択
@@ -196,9 +206,16 @@ class Window:
         df_eat.to_pickle('df_eat.pickle')
         dates = self.sortDate(dateSet)
         return dates
+    
+    def destroyRoot(self):
+        self.root.destroy()
+        self.generated = True
 
 class InputRecord(Window):
     def __init__(self):
+        super().__init__()
+    
+    def makeGUI(self):
         self.createRoot()
         self.root.title("食事の記録")
         
@@ -208,7 +225,7 @@ class InputRecord(Window):
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
+            text='終了', command=self.destroyRoot, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
@@ -446,6 +463,8 @@ class InputRecord(Window):
         self.showGraph()
         
     def createGUI(self):
+        self.makeGUI()
+        
         self.foodCombobox["values"] = self.getFood()
         
         self.dateCombobox["values"] = self.getDate()
@@ -457,6 +476,9 @@ class InputRecord(Window):
 
 class EditRecord(InputRecord):
     def __init__(self):
+        super().__init__()
+        
+    def makeGUI(self):
         self.createRoot()
         self.root.title("記録の編集")
         
@@ -466,7 +488,7 @@ class EditRecord(InputRecord):
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
+            text='終了', command=self.destroyRoot, image=self.btnImage, compound='center'
             )
         self.quitButton.pack(side='right')
         
@@ -531,6 +553,8 @@ class EditRecord(InputRecord):
             print(self.indexCombobox.get())
     
     def createGUI(self):
+        self.makeGUI()
+        
         self.dateCombobox["values"] = self.getDate()
         self.dateCombobox.bind('<<ComboboxSelected>>', self.editDate)
         
@@ -540,6 +564,9 @@ class EditRecord(InputRecord):
 
 class InputFood(Window):
     def __init__(self):
+        super().__init__()
+    
+    def makeGUI(self):
         self.createRoot()
         self.root.title("食材の追加")
         
@@ -549,7 +576,7 @@ class InputFood(Window):
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
+            text='終了', command=self.destroyRoot, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
@@ -646,12 +673,17 @@ class InputFood(Window):
             self.addLabel['text'] = '入力が完了していません'
         
     def createGUI(self):
+        self.makeGUI()
+        
         self.foodAddButton['command'] = self.addFood
         self.insertFoodTree()
         self.root.mainloop()
 
 class EditFood(InputFood):
     def __init__(self):
+        super().__init__()
+        
+    def makeGUI(self):
         self.createRoot()
         self.root.title("食材の編集")
         
@@ -661,7 +693,7 @@ class EditFood(InputFood):
         
         self.quitButton = ttk.Button(
             self.menuFrame, 
-            text='終了', command=self.root.destroy, image=self.btnImage, compound='center'
+            text='終了', command=self.destroyRoot, image=self.btnImage, compound='center'
         )
         self.quitButton.pack(side='right')
         
@@ -711,6 +743,8 @@ class EditFood(InputFood):
             print(self.indexCombobox.get())
     
     def createGUI(self):
+        self.makeGUI()
+        
         self.insertFoodTree()
         
         df_food = pd.read_pickle('df_food.pickle')

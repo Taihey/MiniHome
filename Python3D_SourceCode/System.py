@@ -18,6 +18,12 @@ YELLOW = (255, 255,  0)
 #重力加速度
 g = 1
 
+#シーン
+index = 0
+tmr = 0
+#ポーズ画面化どうか
+pause = False
+
 #3次正方行列の行列式
 def det(A):
     return (
@@ -118,10 +124,12 @@ class Vector3:
     
 #3次元座標をスクリーン上の2次元座標に変換する
 #透視投影変換
+#perspective.vec[2]よりも手前の点は変換できない
 class Tridim:
     def __init__(self, perspective):
         #視点の座標(画面上)
         self.perspective = perspective
+        self.tag = "ver1"
         
     def dim(self, position):            
         ratio =  (0-self.perspective.vec[2]) / (position.vec[2]-self.perspective.vec[2])
@@ -132,6 +140,7 @@ class Tridim:
     
         return [xr, yr]
 
+#衝突判定 + その時の処理
 def judgeCollision(hierarchy):
     for i in range(len(hierarchy)):
         if hierarchy[i].haveCollider:
@@ -142,3 +151,59 @@ def judgeCollision(hierarchy):
                         hierarchy[j].onCollision(hierarchy[i])
 
 
+class Timer:
+    def __init__(self):
+        return
+    
+    def count(self):
+        global tmr
+        tmr += 1
+    
+    def reset(self):
+        global tmr
+        tmr = 0
+
+class SceneManager:
+    def __init__(self):
+        global index
+        index = 0
+        return
+    
+    def moveScene(self, idx):
+        global index
+        index = idx
+        Timer().reset()
+
+class Text:
+    def __init__(self, txt):
+        self.text = txt
+    
+    def putCenter(self, bg, fntsize, col):                      #画面の中心
+        font = pygame.font.Font(None, fntsize)
+        text = font.render(self.text, True, col)
+        bg.blit(text, [windowx/2-text.get_width()/2, windowy/2-text.get_height()/2])
+    
+    def putHeight(self, bg, fntsize, col, y):                    #中心の高さを指定
+        font = pygame.font.Font(None, fntsize)
+        text = font.render(self.text, True, col)
+        bg.blit(text, [windowx/2-text.get_width()/2, y-text.get_height()/2])
+    
+    def putFlex(self, bg, fntsize, col, x, y):               #x座標もy座標も変えられる。左上の座標を指定する
+        font = pygame.font.Font(None, fntsize)
+        text = font.render(self.text, True, col)
+        bg.blit(text, [x, y])
+
+class keyManager:
+    def __init__(self, key):
+        self.key = key
+        self.flag = True
+    
+    def onPress(self):        #押した瞬間だけTrueを返す
+        key = pygame.key.get_pressed()
+        if key[self.key]:
+            ans = self.flag and key[self.key]
+            self.flag = False
+            return ans
+        else:
+            self.flag = True
+            return False

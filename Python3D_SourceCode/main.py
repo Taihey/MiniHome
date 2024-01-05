@@ -3,9 +3,10 @@ import sys
 import Objects
 import Character
 import CreateObject
-from System import *
+import System
 import Operation
 import Window
+import UI
 
 BLACK = (  0,   0,   0)
 WHITE = (255, 255, 255)
@@ -13,6 +14,9 @@ RED   = (255,   0,   0)
 GREEN = (  0, 255,   0)
 BLUE  = (  0,   0, 255)
 YELLOW = (255, 255,  0)
+
+windowx = System.windowx
+windowy = System.windowy
 
 def main():
     pygame.init()
@@ -22,44 +26,93 @@ def main():
     #オブジェクトを作成--------------
     clock = pygame.time.Clock()
     #font = pygame.font.Font(None, 80)
-    tridim = Tridim(Vector3([windowx/2, windowy/2, -500]))
+    tridim = System.Tridim(System.Vector3([windowx/2, windowy/2, -500]))
     
     Camera = Objects.Camera()
+    timer = System.Timer()
+    sceneManager = System.SceneManager()
     
-    pc = CreateObject.CreatePC().shift(Vector3([windowx/2, windowy/2-100, 500]))
+    pc = CreateObject.CreatePC().shift(System.Vector3([-1500, 600, -1500]))
     PC = Character.PC(pc, Window.InputRecord())
+    pc2 = CreateObject.CreatePC().shift(System.Vector3([-1500, 600, 1500]))
+    PC2 = Character.PC(pc2, Window.EditRecord())
+    pc3 = CreateObject.CreatePC().shift(System.Vector3([1500, 600, 1500]))
+    PC3 = Character.PC(pc3, Window.InputFood())
+    pc4 = CreateObject.CreatePC().shift(System.Vector3([1500, 600, -1500]))
+    PC4 = Character.PC(pc4, Window.EditFood())
     
     player = CreateObject.CreatePlayer().shift(
-        Vector3([-100, 500, 400])).rotate(
-        Vector3([0, 90, 0]))
-    Player = Character.Player(player).setVelocity(10, 100)
+        System.Vector3([0, 500, 0])).rotate(
+        System.Vector3([0, 90, 0]))
+    Player = Character.Player(player).setVelocity(30, 100)
     
-    Floor = CreateObject.CreateFloor(1000).shift(Vector3([300, 2500, 400]))
+    Floor = CreateObject.CreateFloor(300).shift(System.Vector3([0, 1500, 0]))
     
-    Desk = CreateObject.CreateDesk().shift(Vector3([windowx/2, windowy/2 + 50, 500]))
+    Desk = CreateObject.CreateDesk().shift(System.Vector3([-1500, 650, -1500]))
+    Desk2 = CreateObject.CreateDesk().shift(System.Vector3([-1500, 650, 1500]))
+    Desk3 = CreateObject.CreateDesk().shift(System.Vector3([1500, 650, 1500]))
+    Desk4 = CreateObject.CreateDesk().shift(System.Vector3([1500, 650, -1500]))
+    
+    door = CreateObject.CreateDoor().shift(System.Vector3([0, 500, 2500]))
+    Door = Character.Door(door)
+    Fense = CreateObject.CreateFenseH(850).shift(System.Vector3([-1350, 600, 2600]))
+    Fense2 = CreateObject.CreateFenseH(850).shift(System.Vector3([1350, 600, 2600]))
+    Fense3 = CreateObject.CreateFenseH(2500).shift(System.Vector3([0, 600, -2600]))
+    Fense4 = CreateObject.CreateFenseV(2500).shift(System.Vector3([-2600, 600, 0]))
+    Fense5 = CreateObject.CreateFenseV(2500).shift(System.Vector3([2600, 600, 0]))
     #-------------------------------
-    Hierarchy = [pc, player, Floor, Desk]
+    Hierarchy = [
+        pc, pc2, pc3, pc4, Floor, player, Desk, Desk2, Desk3, Desk4, door, 
+        Fense, Fense2, Fense3, Fense4, Fense5
+        ]
     Camera.setHierarchy(Hierarchy)
     
     while True:
+        timer.count()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        
+            
         screen.fill(BLACK)       #黒で、スクリーンをクリアする
         
-        #操作による移動
-        Operation.fieldOperation(Camera, PC, Player)
+        #背景を描く
+        UI.drawBG(screen)
         
-        #重力による自由落下
-        for obj in Hierarchy:
-            obj.move()
+        #終了
+        if System.index == -1 or System.index == -2:
+            if System.tmr > 20:
+                pygame.quit()
+                sys.exit()
         
-        judgeCollision(Hierarchy)
+        #タイトル
+        elif System.index == 0:
+            Camera.zoomOut()
         
-        Camera.chase(player, 800)
+        elif System.index == 1:
+            Camera.zoom()
+            #Playerが近くにいるとopen()が加えて実行される
+            PC.close()
+            PC2.close()
+            PC3.close()
+            PC4.close()
+            Door.close()
+        
+        System.judgeCollision(Hierarchy)
+        
+        #速度の変化など
+        Operation.fieldOperation(Camera, Player, sceneManager)
+        
+        #位置の移動
+        if System.pause == False:
+            for obj in Hierarchy:
+                obj.move()
+        
+        Camera.chase(player)
         Camera.display(screen, tridim)
+        
+        UI.drawUI(screen)
         
         pygame.display.update()
         clock.tick(15)

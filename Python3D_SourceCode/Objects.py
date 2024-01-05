@@ -51,6 +51,8 @@ class Object:
         self.isRigid = False
         self.velosity = Vector3([0, 0, 0])
         self.fallVel = Vector3([0, 0, 0])
+        
+        self.state = "default"
     
     def setChild(self, child, vec, vec2):
         self.children.append(child)
@@ -309,11 +311,11 @@ class Rect(Object):
         ]
 
 class Cube(Object):
-    def __init__(self, lx, ly, lz):   
+    def __init__(self, size):   
         super().__init__()
         self.tag = "cube"
         
-        self.size = Vector3([lx, ly, lz])    #重心から端までの距離を指定
+        self.size = size    #重心から端までの距離を指定
         self.color = GRAY
         self.edgeColor = BLUE
         
@@ -326,7 +328,7 @@ class Cube(Object):
             [3, 0, 4, 7],   #左 -x
             [4, 5, 6, 7]    #前 -z
         ]
-        
+    
     def getTops(self):
         self.tops = [
             #奥の面
@@ -362,7 +364,7 @@ class Cube(Object):
                             tridim.dim(self.tops[i + 4][0], self.tops[i + 4][1], self.tops[i + 4][2]),
                             tridim.dim(self.tops[i2 + 4][0], self.tops[i2 + 4][1], self.tops[i2 + 4][2]),
                             width = 2)
-    
+
 #オブジェクトを描画する
 class Camera(Object):
     def __init__(self):
@@ -377,6 +379,9 @@ class Camera(Object):
         self.unitVectorz = Vector3([0, 0, 1])
         #映し出すものを格納
         self.hierarchy = []
+        
+        #playerとの距離
+        self.dist = 100000
     
     def setChildHierarchy(self, obj):
         if len(obj.children) == 0:
@@ -434,6 +439,7 @@ class Camera(Object):
         return Vector3(ans)
     
     def display(self, bg, tridim):
+        #透視投影で変換できないライン
         border = tridim.perspective.vec[2]
         tops = []
         #すべてのオブジェクトの位置、ローカル座標をカメラのローカル座標に変換
@@ -455,18 +461,28 @@ class Camera(Object):
             if nearestDist != None:
                 obj.nearestDist = nearestDist
         
-        #最小のzが大きい順に並べる
+        #最小のzが大きい順に並べる obj.nearestDistを比べる
         #self.sort(self.hierarchy)
         #中心の座標が近い順に並べる
         self.sortD(self.hierarchy, tridim)
         
+        #四角形のすべての頂点がperspective内にあるか
+        def inRange(tops):
+            b = True
+            for top in tops:
+                if top.vec[2] <= border + 10:
+                    b = False
+                    break
+            return b
+            
         #1つずつ描画
         for obj in self.hierarchy:
+            tops = self.getTops(obj)
+            
             if obj.tag == "cube":
-                tops = self.getTops(obj)
                 #各面に対して、描画するかを判定、描画する
                 for plane in obj.planes:
-                    if tops[plane[0]].vec[2]>border and tops[plane[1]].vec[2]>border and tops[plane[2]].vec[2]>border and tops[plane[3]].vec[2]>border:
+                    if inRange([tops[plane[0]], tops[plane[1]], tops[plane[2]], tops[plane[3]]]):
                         #４つの頂点の画面上の座標
                         t1 = tridim.dim(tops[plane[0]])
                         t2 = tridim.dim(tops[plane[1]])
@@ -476,17 +492,16 @@ class Camera(Object):
                         if (t3[0] - t2[0]) * (t1[1] - t2[1]) - (t1[0] - t2[0]) * (t3[1] - t2[1]) > 0:
                             pygame.draw.polygon(bg, obj.color, [t1, t2, t3, t4])
                             pygame.draw.polygon(bg, obj.edgeColor, [t1, t2, t3, t4], width = 3)
-                        
+                    
             elif obj.tag == "rect":
-                tops = self.getTops(obj)
-                if tops[0].vec[2]>0 and tops[1].vec[2]>0 and tops[2].vec[2]>0 and tops[3].vec[2]>0:
+                if inRange(tops):
                     t1 = tridim.dim(tops[0])
                     t2 = tridim.dim(tops[1])
                     t3 = tridim.dim(tops[2])
                     t4 = tridim.dim(tops[3])
                     pygame.draw.polygon(bg, obj.color, [t1, t2, t3, t4])
                     pygame.draw.polygon(bg, obj.edgeColor, [t1, t2, t3, t4], width = 3)
-    
+
     #hierarchyをviewPosition.vec とtridim.perspective.vecとの距離が大きい順に並べ替える
     def sort(self, hierarchy):
         def merge_sort(list, start, end):
@@ -616,8 +631,18 @@ class Camera(Object):
             
         return tops
     
-    def chase(self, obj, dist):
-        self.position = obj.position - (self.unitVectorz * dist
+    def chase(self, obj):
+        self.position = obj.position - (self.unitVectorz * self.dist
             ) - (self.unitVectory * (windowy/2)) - (
                 self.unitVectorx * (windowx/2)
             )
+    
+    def zoom(self):
+        self.dist -= 1000
+        if self.dist <= 800:
+            self.dist = 800
+    
+    def zoomOut(self):
+        self.dist += 1000
+        if self.dist >= 10000:
+            self.dist = 10000

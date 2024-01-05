@@ -7,6 +7,37 @@ from System import *
 class Character:
     def __init__(self, obj):
         self.object = obj
+        obj.character = self
+    
+    #当たり判定の外までずらす(水平方向)
+    def moveOut(self, opponent):
+        if opponent.collider.tag == "box":
+            #colliderの位置
+            colPos = self.object.position + self.object.collider.position
+            oppColPos = opponent.position + opponent.collider.position
+            
+            deltaXR = (colPos + self.object.collider.size
+                    ).vec[0] - (oppColPos - opponent.collider.size).vec[0] + 10
+            deltaXL = (oppColPos + opponent.collider.size
+                    ).vec[0] - (colPos - self.object.collider.size).vec[0] + 10
+            deltaZB = (colPos + self.object.collider.size
+                    ).vec[2] - (oppColPos - opponent.collider.size).vec[2] + 10
+            deltaZF = (oppColPos + opponent.collider.size
+                    ).vec[2] - (colPos - self.object.collider.size).vec[2] + 10
+            
+            #この中で最小のものを求める
+            deltaDists = [deltaXR, deltaXL, deltaZB, deltaZF]
+            vectors = [
+                Vector3([1, 0, 0]), Vector3([-1, 0, 0]), Vector3([0, 0, 1]), Vector3([0, 0, -1])
+                ]
+            dist = deltaXR
+            ind = 0
+            for i in range(len(deltaDists)):
+                if deltaDists[i] < dist:
+                    dist = deltaDists[i]
+                    ind = i
+            
+            opponent.shift(vectors[ind] * dist)
     
     def onCollision(self, opponent):
         return
@@ -83,7 +114,33 @@ class PC(Character):
     def close(self):
         self.object.play("close")
     
+    def open(self):
+        self.object.play("open")
+    
     def onCollision(self, opponent):
         if opponent.id == "player":
-            self.window.createGUI()
-            opponent.shift(opponent.velosity * (-1))
+            self.open()
+            #開ききっていたらGUIを開く
+            if self.object.state == "opening":
+                self.window.createGUI()
+                #当たり判定の外に行くまでずらす
+                self.moveOut(opponent)
+                self.close()
+
+class Door(Character):
+    def __init__(self, door):
+        super().__init__(door)
+    
+    def close(self):
+        self.object.play("close")
+    
+    def open(self):
+        self.object.play("open")
+    
+    def onCollision(self, opponent):
+        if opponent.id == "player":
+            self.open()
+            if self.object.state == "opening":
+                SceneManager().moveScene(-1)
+                #一度だけ移動したら、moveSceneは実行しない
+                self.object.state = "opened"
