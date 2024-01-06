@@ -31,6 +31,7 @@ def main():
     Camera = Objects.Camera()
     timer = System.Timer()
     sceneManager = System.SceneManager()
+    audio = System.Audio()
     
     pc = CreateObject.CreatePC(WHITE, BLUE).shift(System.Vector3([-800, 600, 1500]))
     PC = Character.PC(pc, Window.InputRecord())
@@ -102,7 +103,7 @@ def main():
         System.judgeCollision(Hierarchy)
         
         #速度の変化など
-        Operation.fieldOperation(Camera, Player, sceneManager)
+        Operation.fieldOperation(Camera, Player, sceneManager, audio)
         
         #位置の移動
         if System.pause == False:

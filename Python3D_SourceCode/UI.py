@@ -3,7 +3,7 @@ import System
 windowx = System.windowx
 windowy = System.windowy
 
-BG = pygame.image.load("./picture/BG.png")
+BG = pygame.image.load("./GameFile/BG.png")
 #半透明のスクリーン
 screen = pygame.Surface((windowx, windowy), flags=pygame.SRCALPHA)
 screen.fill((0, 255, 255, 128))
@@ -42,6 +42,14 @@ def drawUI(bg):
         System.Text("Get Closer to PC").putFlex(bg, 40, System.BLACK, x = 50, y = 60)
         System.Text("to Open a Window").putFlex(bg, 40, System.BLACK, x = 50, y = 110)
     
+    elif System.index == 2:
+        bg.blit(pauseScreen, [0, 0])
+        
+        pygame.draw.rect(bg, System.YELLOW, [100, 400, 800, 200])
+        pygame.draw.rect(bg, System.AQUA, [97, 397, 806, 206], width=6, border_radius=10)
+        
+        System.Text("Window is Open").putCenter(bg, 120, System.BLUE)
+        
     if System.pause:
         bg.blit(pauseScreen, [0, 0])
         pygame.draw.rect(bg, System.YELLOW, [200, 155, 600, 90])

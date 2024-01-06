@@ -122,7 +122,18 @@ class PC(Character):
             self.open()
             #開ききっていたらGUIを開く
             if self.object.state == "opening":
+                #windowを開いているというUIを表示
+                SceneManager().moveScene(2)
+                self.object.state = "opened"
+                #playerを止める
+                opponent.play("stay")
+                
+            elif self.object.state == "opened":
                 self.window.createGUI()
+                #表示が終わったときの処理
+                SceneManager().moveScene(1)
+                self.object.state = "default"
+                opponent.state = "default"
                 #当たり判定の外に行くまでずらす
                 self.moveOut(opponent)
                 self.close()

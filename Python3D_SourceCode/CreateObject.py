@@ -20,11 +20,12 @@ def CreatePC(col, col2):
             return
         
         def play(self):
-            cube.state = "default"
-            if cube2.rotation.vec[0] < 90 * math.pi / 180:  
-                cube2.rotate(Vector3([10, 0, 0]))
-            else:
-                cube2.rotation.vec[0] = 90 * math.pi / 180
+            if cube.state != "opened":
+                cube.state = "default"
+                if cube2.rotation.vec[0] < 90 * math.pi / 180:  
+                    cube2.rotate(Vector3([10, 0, 0]))
+                else:
+                    cube2.rotation.vec[0] = 90 * math.pi / 180
     
     #close()に加えてopen()が実行される -> 多めの角度にする
     class Open:
@@ -32,16 +33,17 @@ def CreatePC(col, col2):
             return
         
         def play(self):
-            if cube2.rotation.vec[0] > -10 * math.pi / 180:
-                cube2.rotate(Vector3([-20, 0, 0]))
-                if cube2.rotation.vec[0] < -10 * math.pi / 180:
+            if cube.state != "opened":
+                if cube2.rotation.vec[0] > -10 * math.pi / 180:
+                    cube2.rotate(Vector3([-20, 0, 0]))
+                    if cube2.rotation.vec[0] < -10 * math.pi / 180:
+                        cube2.rotation.vec[0] = -10 * math.pi / 180
+                        cube.state = "opening"
+                #close()の後にopen()が来るのでこうはならない
+                else:
                     cube2.rotation.vec[0] = -10 * math.pi / 180
+                    #開ききっている状態
                     cube.state = "opening"
-            #close()の後にopen()が来るのでこうはならない
-            else:
-                cube2.rotation.vec[0] = -10 * math.pi / 180
-                #開ききっている状態
-                cube.state = "opening"
     
     cube.setMotion("close", Close())
     cube.setMotion("open", Open())
@@ -123,10 +125,17 @@ def CreatePlayer():
             
             if self.playing == 0:
                 self.playing = 1
+                body.setRotation(Vector3([0, 0, 0]))
+                armR.setRotation(Vector3([0, 0, 0]))
+                armL.setRotation(Vector3([0, 0, 0]))
+                legR.setRotation(Vector3([0, 0, 0]))
+                legL.setRotation(Vector3([0, 0, 0]))
                 armR2.setRotation(Vector3([10, 0, 0]))
                 armL2.setRotation(Vector3([10, 0, 0]))
                 legR2.setRotation(Vector3([-10, 0, 0]))
                 legL2.setRotation(Vector3([-10, 0, 0]))
+                footL.setRotation(Vector3([0, 0, 0]))
+                footR.setRotation(Vector3([0, 0, 0]))
             if self.state == 1: #右手を前に出す
                 armR.rotate(Vector3([5, 0, 0]))
                 armL.rotate(Vector3([-5, 0, 0]))
@@ -165,13 +174,13 @@ def CreatePlayer():
             
             if self.playing == 0:
                 self.playing = 1
-                body.rotate(Vector3([-10, 0, 0]))
-                legR.rotate(Vector3([10, 0, 0]))
-                legL.rotate(Vector3([10, 0, 0]))
-                armR.rotate(Vector3([-30, 0, -10]))
-                armL.rotate(Vector3([-30, 0, 10]))
-                armR2.rotate(Vector3([120, 0, 0]))
-                armL2.rotate(Vector3([120, 0, 0]))
+                body.setRotation(Vector3([-10, 0, 0]))
+                legR.setRotation(Vector3([10, 0, 0]))
+                legL.setRotation(Vector3([10, 0, 0]))
+                armR.setRotation(Vector3([-30, 0, -10]))
+                armL.setRotation(Vector3([-30, 0, 10]))
+                armR2.setRotation(Vector3([120, 0, 0]))
+                armL2.setRotation(Vector3([120, 0, 0]))
                 legL2.setRotation(Vector3([-100, 0, 0]))
                 
             if self.state == 1: #右手を前に出す 右足は伸ばして左足は曲げる

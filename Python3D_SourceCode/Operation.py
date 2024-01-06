@@ -3,16 +3,18 @@ import System
 
 keyManager_p = System.keyManager(pygame.K_p)
 
-def fieldOperation(camera, Player, sceneManager):
+def fieldOperation(camera, Player, sceneManager, audio):
     key = pygame.key.get_pressed()
     
     #タイトル
     if System.index == 0:
         if key[pygame.K_s]:
             sceneManager.moveScene(1)
+            audio.playSE("click")
         
         elif key[pygame.K_q]:
             sceneManager.moveScene(-2)
+            audio.playSE("click")
     
     #index = 1 or -1の時
     elif (System.index == -1 or System.index == 1) and System.pause == False:
@@ -51,11 +53,14 @@ def fieldOperation(camera, Player, sceneManager):
         if System.pause == False:
             if keyManager_p.onPress():
                 System.pause = True
+                audio.playSE("click")
         
         else:
             if keyManager_p.onPress():
                 System.pause = False
+                audio.playSE("click")
             
             elif key[pygame.K_b]:
                 sceneManager.moveScene(0)
                 System.pause = False
+                audio.playSE("click")

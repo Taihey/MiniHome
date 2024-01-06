@@ -15,9 +15,9 @@ class Window:
         self.root.geometry('1200x1000')
         self.root.resizable(False, False)
 
-        self.scene = PhotoImage(file="./picture/screen.png").subsample(2, 2)
+        self.scene = PhotoImage(file="./screen.png").subsample(2, 2)
         #ボタンの画像
-        self.btnImage = PhotoImage(file="./picture/screen.png").subsample(45, 200)
+        self.btnImage = PhotoImage(file="./screen.png").subsample(45, 200)
 
         self.canvas = Canvas(self.root)
         self.canvas.pack(fill="both", ipadx=10, ipady=10)

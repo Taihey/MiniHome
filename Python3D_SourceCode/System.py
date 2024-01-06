@@ -16,7 +16,7 @@ AQUA =  (  0, 125, 125)
 YELLOW = (255, 255,  0) 
 
 #重力加速度
-g = 1
+g = 10
 
 #シーン
 index = 0
@@ -207,3 +207,11 @@ class keyManager:
         else:
             self.flag = True
             return False
+
+class Audio:
+    def __init__(self):
+        self.SE = pygame.mixer.Sound("./GameFile/click.oga")
+    
+    def playSE(self, string):
+        if string == "click":
+            self.SE.play()
