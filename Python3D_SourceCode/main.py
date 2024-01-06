@@ -32,26 +32,26 @@ def main():
     timer = System.Timer()
     sceneManager = System.SceneManager()
     
-    pc = CreateObject.CreatePC().shift(System.Vector3([-1500, 600, -1500]))
+    pc = CreateObject.CreatePC(WHITE, BLUE).shift(System.Vector3([-800, 600, 1500]))
     PC = Character.PC(pc, Window.InputRecord())
-    pc2 = CreateObject.CreatePC().shift(System.Vector3([-1500, 600, 1500]))
+    pc2 = CreateObject.CreatePC(BLACK, BLUE).shift(System.Vector3([-1500, 600, 800]))
     PC2 = Character.PC(pc2, Window.EditRecord())
-    pc3 = CreateObject.CreatePC().shift(System.Vector3([1500, 600, 1500]))
+    pc3 = CreateObject.CreatePC(WHITE, RED).shift(System.Vector3([800, 600, 1500]))
     PC3 = Character.PC(pc3, Window.InputFood())
-    pc4 = CreateObject.CreatePC().shift(System.Vector3([1500, 600, -1500]))
+    pc4 = CreateObject.CreatePC(BLACK, RED).shift(System.Vector3([1500, 600, 800]))
     PC4 = Character.PC(pc4, Window.EditFood())
     
     player = CreateObject.CreatePlayer().shift(
-        System.Vector3([0, 500, 0])).rotate(
+        System.Vector3([0, 500, -1300])).rotate(
         System.Vector3([0, 90, 0]))
     Player = Character.Player(player).setVelocity(30, 100)
     
     Floor = CreateObject.CreateFloor(300).shift(System.Vector3([0, 1500, 0]))
     
-    Desk = CreateObject.CreateDesk().shift(System.Vector3([-1500, 650, -1500]))
-    Desk2 = CreateObject.CreateDesk().shift(System.Vector3([-1500, 650, 1500]))
-    Desk3 = CreateObject.CreateDesk().shift(System.Vector3([1500, 650, 1500]))
-    Desk4 = CreateObject.CreateDesk().shift(System.Vector3([1500, 650, -1500]))
+    Desk = CreateObject.CreateDesk().shift(System.Vector3([-800, 650, 1500]))
+    Desk2 = CreateObject.CreateDesk().shift(System.Vector3([-1500, 650, 800]))
+    Desk3 = CreateObject.CreateDesk().shift(System.Vector3([800, 650, 1500]))
+    Desk4 = CreateObject.CreateDesk().shift(System.Vector3([1500, 650, 800]))
     
     door = CreateObject.CreateDoor().shift(System.Vector3([0, 500, 2500]))
     Door = Character.Door(door)
@@ -82,7 +82,7 @@ def main():
         
         #終了
         if System.index == -1 or System.index == -2:
-            if System.tmr > 20:
+            if System.tmr > 15:
                 pygame.quit()
                 sys.exit()
         

@@ -2,11 +2,11 @@ import Objects
 from System import *
 import math
 
-def CreatePC():
+def CreatePC(col, col2):
     #キーボード
-    cube = Objects.Cube(Vector3([100, 10, 80])).setColor(GRAY, AQUA)
+    cube = Objects.Cube(Vector3([100, 10, 80])).setColor(col, col2)
     #画面
-    cube2 = Objects.Cube(Vector3([100, 80, 10])).setColor(GRAY, AQUA)
+    cube2 = Objects.Cube(Vector3([100, 80, 10])).setColor(col, col2)
     rect = Objects.Rect(80, 64)
     
     #描画しやすいように少し画面を前に出す
@@ -48,7 +48,7 @@ def CreatePC():
     
     #Playerが近づいているかを判定
     cube.setCollider("box"
-        ).setColliderSize(Vector3([200, 10, 200]))
+        ).setColliderSize(Vector3([250, 10, 250]))
     
     cube.activeRigid()
     

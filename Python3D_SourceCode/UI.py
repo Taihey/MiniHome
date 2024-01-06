@@ -18,7 +18,7 @@ def drawUI(bg):
         bg.blit(screen, [0, 0])
         System.Text("Thank you for Playing!").putCenter(bg, 120, System.BLACK)
     
-    if System.index == -1:
+    elif System.index == -1:
         bg.blit(screen, [0, 0])
         System.Text("Have a nice day!").putCenter(bg, 120, System.BLACK)
     
@@ -27,6 +27,28 @@ def drawUI(bg):
         System.Text("Push [S] to Start!").putHeight(bg, 80, System.BLACK, 700)
         System.Text("Push [Q] to Quit Game").putHeight(bg, 60, System.RED, 800)
     
+    elif System.index == 1:
+        System.Text("Move: [RIGHT], [LEFT], [UP], [DOWN]"
+                    ).putFlex(bg, 40, System.BLACK, 380, 20)
+        System.Text("Run: [D] + [RIGHT], [LEFT], [UP], [DOWN]"
+                    ).putFlex(bg, 40, System.BLACK, 380, 70)
+        System.Text("Move Camera: [C] + [RIGHT], [LEFT]"
+                    ).putFlex(bg, 40, System.BLACK, 380, 120)
+        System.Text("Pause: [P]"
+                    ).putFlex(bg, 40, System.BLACK, 380, 170)
+        
+        pygame.draw.rect(bg, System.YELLOW, [30, 50, 300, 100])
+        pygame.draw.rect(bg, System.AQUA, [27, 47, 306, 106], width=6, border_radius=10)
+        System.Text("Get Closer to PC").putFlex(bg, 40, System.BLACK, x = 50, y = 60)
+        System.Text("to Open a Window").putFlex(bg, 40, System.BLACK, x = 50, y = 110)
+    
     if System.pause:
         bg.blit(pauseScreen, [0, 0])
-        System.Text("Push [B] to Back to Title").putHeight(bg, 60, System.RED, 800)
+        pygame.draw.rect(bg, System.YELLOW, [200, 155, 600, 90])
+        pygame.draw.rect(bg, System.AQUA, [197, 152, 606, 96], width=6, border_radius=10)
+        System.Text("Pause Menu").putHeight(bg, 100, System.BLACK, y = 200)
+        
+        pygame.draw.rect(bg, System.YELLOW, [100, 550, 800, 200])
+        pygame.draw.rect(bg, System.AQUA, [97, 547, 806, 206], width=6, border_radius=10)
+        System.Text("Push [P] to Restart").putHeight(bg, 80, System.BLACK, 600)
+        System.Text("Push [B] to Back to Title").putHeight(bg, 60, System.RED, 700)
