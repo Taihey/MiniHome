@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="jp"> 
+    <head>
+        <meta charset="UTF-8">
+<script src="header.js"></script>  
+        <h2>-ソースコード紹介-</h2>
+        <div class="flex"><div class="alert" id="t">
+            <p>GitHubのURL:</p>
+            <ul>
+                <li><a id="top" href="https://github.com/Taihey/MiniHome.git">
+                https://github.com/Taihey/MiniHome.git
+                </a></li>
+                <li>
+                    pythonのソースコード、このhtmlファイルを置いています。
+                </li>
+            </ul>
+        </div></div>
+        <p>ソースコードの依存関係は以下のようになっています。</p>
+        <div class="center">
+            <img id="big" src="./Picture/sourceCode.png">
+        </div>
+        <div class="text">
+            <p>矢印はそれぞれのスクリプトがどのスクリプト、ライブラリを参照しているかを示します。</p>
+            <p>また、黒い矢印は自作のスクリプト、赤い矢印はpythonの標準ライブラリ、
+                青い矢印はpyghonの外部ライブラリの参照です。</p>
+            <p>( )の中に自作のスクリプトの行数を示します。</p>
+        </div>
+
+        <div class="flex">
+            <div id="center">
+                <ul class="title">
+                    <li>System.py (216行)</li>
+                </ul>
+                <p>ゲーム内のパラメーターや、
+                    このゲームの構成に必要なクラスの宣言を行っています。</p>
+                <p></p>
+                <div class="alert">
+                    <ul id="left">
+                        <li>Vector3: 3つの実数をまとめて扱うためのクラスです。</li>
+                        <li>Tridim: 3次元の座標を2次元の画面上の座標にに変換します。</li>
+                        <li>Audio: ボタンを押したときのSEを鳴らします。</li>
+                        <li>Text: 画面にテキストを表示します。</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>UI.py (62行)</li>
+                </ul>
+                <p>タイトル画面や、プレイ中のマニュアルの表示を設定します。</p>
+                <ul class="title">
+                    <li>Operation.py (66行)</li>
+                </ul>
+                <p>実際にゲームをプレイする際のキーの割り当てを行っています。</p>
+            </div>
+        </div>
+
+        <div class="flex" id="big">
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>Objects.py (648行)</li>
+                </ul>
+                <div>
+                    <p>3D空間での物体を表すクラスを宣言しています。</p>
+                </div>
+                <div class="alert">
+                    <ul id="left">
+                        <li>Object: すべての親クラスです。
+                            座標、基準からの回転、親子関係のオブジェクトなどのメンバ変数を持ち、
+                            回転、移動などのメンバ関数があります。</li>
+                        <li>Rect: 長方形を設置します。</li>
+                        <li>Cube: 直方体を設置します。</li>
+                        <li>Camera: カメラを表します。
+                            ヒエラルキー中のオブジェクトを画面に描画します。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <div id="center">
+                <ul class="title">
+                    <li>Component.py (39行)</li>
+                </ul>
+                <p>Objectクラスのメンバ変数となるクラスを宣言します。</p>
+                <div class="alert">
+                    <ul id="left">
+                        <li>BoxCollider: 直方体の当たり判定です。回転はしません。</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>Character.py (157行)</li>
+                </ul>
+                <p>Objectsクラスの物体に性質を付与します。</p>
+                <div class="alert">
+                    <ul id="left">
+                        <li>Character: すべての親クラスです。</li>
+                        <li>Player: 操作するプレイヤーです。</li>
+                        <li>PC: フィールドに設置しているパソコンです。
+                            表示するウィンドウを指定します。</li>
+                        <li>Door: 開くとゲームを終了するドアです。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <div id="center">
+                <ul class="title">
+                    <li>CreateObject.py (423行)</li>
+                </ul>
+                <p>直方体や長方形を組み合わせて、フィールドに設置する物体を作成します。
+                    また、それらの物体のアニメーションも作成します。</p>
+            </div>
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>Window.py (762行)</li>
+                </ul>
+                <p>PCを開いたときに表示するウィンドウを作成します。</p>
+                <div class="alert">
+                    <ul id="left">
+                        <li>Window: すべての親クラスです。</li>
+                        <li>InpurRecord: 記録を入力するウィンドウです。</li>
+                        <li>EditRecord: 保存した記録を編集します。</li>
+                        <li>InputFood: 食材を入力して保存します。</li>
+                        <li>EditRecord: 保存した食材を編集します。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex" id="big">
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>main.py (122行)</li>
+                </ul>
+                <div>
+                    <p>このゲームをプレイするのに直接実行するファイルです。</p>
+                </div>
+            </div>
+        </div>
+<script src="footer.js"></script>

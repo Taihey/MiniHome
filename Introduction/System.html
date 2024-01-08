@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="jp"> 
+    <head>
+        <meta charset="UTF-8">
+<script src="header.js"></script>  
+        <h2>-食事管理Window-</h2>
+        
+        <div class="text">
+            <p>表示されるWindowは4つあります。</p>
+        </div>
+        <div class="flex">
+            <div id="center"><img id="portrait" src="./Picture/PCs.png"></div>
+            <div id="center" class="text">
+                <p>①(白+青): 食事の記録</p>
+                <p>②(黒+青): 食事の記録の編集</p>
+                <p>③(白+赤): 食材の追加</p>
+                <p>④(黒+赤): 食材の編集
+            </div>
+        </div>
+
+        <div class="flex2"><h3 id="title">食事の記録</h3></div>
+        <div class="flex">
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>①: 記録の入力(1段目)</li>
+                </ul>
+                <p>食事した日付、時刻、食材、量を入力します。
+                    右の登録ボタンを押すと保存されます。</p>
+                <p>食材は、事前に追加したものから選択します。</p>
+                <ul class="title">
+                    <li>②: 日付の選択(2段目)</li>
+                </ul>
+                <p>記録を見たい日付を選択します。
+                    その日の合計の摂取カロリーなどが右に表示されます。
+                    また、その日の摂取の様子を表すグラフも表示されます。</p>
+            </div>
+            <div id="center"><img id="portrait" src="./Picture/inputRecord.png"></div>
+        </div>
+
+        <div class="flex2"><h3 id="title">食事の記録の編集</h3></div>
+        <div class="flex">
+            <div id="center"><img id="portrait" src="./Picture/editRecord.png"></div>
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>①: 日付の選択(画面上部)</li>
+                </ul>
+                <p>削除したい記録がある日付を選択します。
+                    下の欄にその日の記録が表示されます。</p>
+                <ul class="title">
+                    <li>②: インデックス番号の選択(画面下部)</li>
+                </ul>
+                <p>削除したい記録のインデックス番号を選択します。
+                    右の削除ボタンを押すと削除します。</p>
+            </div>
+        </div>
+
+        <div class="flex2"><h3 id="title">食材の追加</h3></div>
+        <div class="flex">
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>食材の入力</li>
+                </ul>
+                <p>追加する食材の情報を入力します。
+                    追加ボタンを押すと保存されます。</p>
+            </div>
+            <div id="center"><img id="portrait" src="./Picture/inputFood.png"></div>
+        </div>
+
+        <div class="flex2"><h3 id="title">食事の記録の編集</h3></div>
+        <div class="flex">
+            <div id="center"><img id="portrait" src="./Picture/editFood.png"></div>
+            <div id="center" class="text">
+                <ul class="title">
+                    <li>インデックス番号の選択</li>
+                </ul>
+                <p>削除する食材のインデックス番号を選択します。
+                    右の削除ボタンを押すと削除します。</p>
+                
+            </div>
+        </div>
+<script src="footer.js"></script>
