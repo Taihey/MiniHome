@@ -373,8 +373,8 @@ class InputRecord(Window):
         df_eatcal_day = df_eatcal.loc[
             df_eat.iloc[:, 0] == self.dateCombobox.get(), :
             ]
-        df_eat.to_pickle('df_eat_sub.pickle')
-        df_eatcal.to_pickle('df_eatcal_sub.pickle')
+        df_eat.to_pickle('df_eat.pickle')
+        df_eatcal.to_pickle('df_eatcal.pickle')
         
         return df_eat_day, df_eatcal_day
     
@@ -646,7 +646,7 @@ class InputFood(Window):
                 values=val_list
                 )
             
-        df_food.to_pickle('df_food_sub.pickle')
+        df_food.to_pickle('df_food.pickle')
         
     #新しい食材の追加
     def addFood(self):

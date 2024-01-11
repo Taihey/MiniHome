@@ -1,6 +1,5 @@
 import math
 import pygame
-import Objects
 windowx = 1000
 windowy = 1000
 

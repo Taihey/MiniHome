@@ -1,5 +1,4 @@
 #機能を持ったオブジェクトのクラス
-import pygame
 import math
 from System import *
 
